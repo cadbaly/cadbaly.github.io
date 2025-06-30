@@ -1,4 +1,4 @@
-# Path of Exile Militant Jewel検索の完全ガイド：失敗しない選び方とJungroanビルド対応
+# Militant Jewel検索の完全ガイド：失敗しない選び方とJungroanビルド対応
 
 Path of ExileのMilitant Jewel（軍事の宝珠）選びで苦労していませんか？特にJungroanのGeneral's Cry Slayerビルドなど、特定のビルドに最適な宝珠を見つけるのは非常に困難です。この記事では、効率的な検索方法と、既存ノードを誤って置き換えてしまう問題を回避するテクニックをご紹介します。
 
