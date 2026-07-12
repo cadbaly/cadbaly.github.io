@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Path of Exile 2 パッチ0.5 Return of the Ancients / Runes of Aldur のビルドメタ振り返り">
+  <title>PoE 2 0.5 ビルドメタ振り返り</title>
+  <style>
+    :root{
+      --bg:#0b0d10;--surface:#12161b;--surface2:#181e24;--line:#2a333d;
+      --text:#edf1f4;--muted:#9ea9b3;--gold:#d9ad62;--gold2:#f1d497;
+      --red:#dc665e;--cyan:#68b8c8;--green:#72bd8d;--violet:#a993dc;
+      --shadow:0 18px 50px rgba(0,0,0,.28);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{margin:0;color:var(--text);font-family:Inter,"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;line-height:1.8;background:
+      radial-gradient(circle at 12% 0%,rgba(217,173,98,.12),transparent 30rem),
+      radial-gradient(circle at 90% 18%,rgba(104,184,200,.08),transparent 28rem),var(--bg)}
+    a{color:var(--gold2);text-underline-offset:3px}
+    a:hover{color:#fff}
+    .wrap{width:min(1180px,calc(100% - 36px));margin-inline:auto}
+    .hero{min-height:72vh;display:grid;align-items:end;padding:96px 0 60px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+    .hero:after{content:"0.5";position:absolute;right:-.03em;top:-.22em;font:900 clamp(12rem,35vw,34rem)/1 Georgia,serif;color:transparent;-webkit-text-stroke:1px rgba(217,173,98,.11);pointer-events:none}
+    .eyebrow{display:flex;align-items:center;gap:10px;color:var(--gold2);font-size:.79rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    .eyebrow:before{content:"";width:38px;height:1px;background:var(--gold)}
+    h1{font:700 clamp(2.7rem,7vw,6.5rem)/.98 Georgia,"Yu Mincho",serif;letter-spacing:-.04em;margin:.28em 0 .18em;max-width:980px}
+    .hero-lead{max-width:790px;font-size:clamp(1rem,2vw,1.26rem);color:#c7cfd5;margin:0}
+    .meta{display:flex;flex-wrap:wrap;gap:10px 24px;color:var(--muted);font-size:.86rem;margin-top:30px}
+    .meta strong{color:var(--text)}
+    .nav{position:sticky;top:0;z-index:20;background:rgba(11,13,16,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(42,51,61,.8)}
+    .nav-inner{display:flex;gap:4px;overflow:auto;scrollbar-width:none;padding:9px 0}
+    .nav a{white-space:nowrap;text-decoration:none;color:var(--muted);padding:7px 12px;border-radius:99px;font-size:.82rem}
+    .nav a:hover{background:var(--surface2);color:var(--text)}
+    main{padding:64px 0 100px}
+    section{scroll-margin-top:70px;margin-bottom:84px}
+    .section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.65fr);gap:36px;align-items:end;margin-bottom:26px}
+    h2{font:700 clamp(2rem,4vw,3.5rem)/1.12 Georgia,"Yu Mincho",serif;margin:0;letter-spacing:-.025em}
+    h3{line-height:1.35}
+    .section-head p{margin:0;color:var(--muted);font-size:.94rem}
+    .verdict{display:grid;grid-template-columns:1.45fr repeat(3,1fr);gap:12px}
+    .panel{background:linear-gradient(145deg,rgba(24,30,36,.96),rgba(18,22,27,.96));border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+    .panel.primary{border-color:rgba(217,173,98,.42);position:relative;overflow:hidden}
+    .panel.primary:before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:3px;background:linear-gradient(90deg,var(--gold),transparent)}
+    .kicker{font-size:.72rem;letter-spacing:.12em;color:var(--gold2);font-weight:800;text-transform:uppercase}
+    .big{font:700 clamp(1.5rem,3vw,2.4rem)/1.2 Georgia,"Yu Mincho",serif;margin:.32em 0 .4em}
+    .panel p{margin:0;color:#bec7ce;font-size:.9rem}
+    .stat{font:750 2rem/1 Georgia,serif;color:var(--gold2);margin:.32em 0 .2em}
+    .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+    .time{background:var(--surface);padding:22px;min-height:150px}
+    .time time{font-size:.75rem;color:var(--gold2);font-weight:800}
+    .time strong{display:block;margin:8px 0 7px;font-size:1rem}
+    .time p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.65}
+    .bars{display:grid;gap:13px}
+    .bar-row{display:grid;grid-template-columns:170px 1fr 58px;gap:12px;align-items:center;font-size:.86rem}
+    .track{height:9px;background:#222a31;border-radius:99px;overflow:hidden}
+    .fill{height:100%;width:calc(var(--v) * 1%);background:linear-gradient(90deg,var(--gold),var(--red));border-radius:inherit}
+    .bar-row b{text-align:right;color:var(--gold2)}
+    .note{border-left:3px solid var(--gold);padding:12px 16px;background:rgba(217,173,98,.07);color:#cbd2d7;font-size:.86rem;margin-top:20px}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+    table{border-collapse:collapse;width:100%;min-width:980px;font-size:.84rem}
+    th,td{padding:15px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+    th{position:sticky;top:0;background:#1d242b;color:#b9c2ca;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;z-index:1}
+    tr:last-child td{border-bottom:0}
+    tbody tr:hover{background:rgba(255,255,255,.025)}
+    td:first-child{font-weight:800;min-width:210px}
+    .score{white-space:nowrap;color:#3d464e;letter-spacing:1px}.score i{font-style:normal;color:var(--gold)}
+    .tag{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px;padding:2px 8px;font-size:.7rem;color:#c6cdd3;background:#151a1f;white-space:nowrap}
+    .tag.op{border-color:rgba(220,102,94,.45);color:#f0a29d}.tag.budget{border-color:rgba(114,189,141,.42);color:#9fdbb3}.tag.fun{border-color:rgba(169,147,220,.42);color:#cbbbec}.tag.safe{border-color:rgba(104,184,200,.42);color:#9cd1dc}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .filter{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:8px 13px;cursor:pointer;font:inherit;font-size:.8rem}
+    .filter:hover,.filter.active{border-color:var(--gold);color:#111;background:var(--gold2)}
+    .build-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .build{background:linear-gradient(155deg,var(--surface2),var(--surface));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .build[hidden]{display:none}
+    .build-top{padding:22px 24px 16px;border-bottom:1px solid var(--line)}
+    .build-topline{display:flex;justify-content:space-between;gap:16px;align-items:start}
+    .num{font:700 2.2rem/1 Georgia,serif;color:rgba(217,173,98,.35)}
+    .build h3{font:700 1.35rem/1.25 Georgia,"Yu Mincho",serif;margin:2px 0 5px}
+    .class{color:var(--muted);font-size:.8rem}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+    .build-body{padding:20px 24px 24px}
+    .build-body p{font-size:.88rem;color:#c3cbd1;margin:0 0 16px}
+    .mechanic{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+    .mechanic span{position:relative;padding:11px 9px;background:#0f1317;border:1px solid #273039;border-radius:10px;text-align:center;font-size:.75rem;line-height:1.45}
+    .mechanic span:not(:last-child):after{content:"›";position:absolute;right:-9px;top:50%;transform:translateY(-50%);z-index:2;color:var(--gold2);font-size:1.2rem}
+    .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);padding-top:15px}
+    .mini-grid h4{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin:0 0 5px}
+    .mini-grid p{font-size:.78rem;line-height:1.6;margin:0;color:var(--muted)}
+    .source-link{display:inline-block;margin-top:14px;font-size:.75rem;text-decoration:none;color:var(--gold2)}
+    .shift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .shift{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+    .shift .arrow{font-size:1.6rem;color:var(--gold);line-height:1}.shift h3{font-size:1rem;margin:8px 0}.shift p{font-size:.82rem;color:var(--muted);margin:0}
+    .farm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .farm{padding:20px;border:1px solid var(--line);background:var(--surface);border-radius:14px}
+    .farm h3{margin:0 0 8px;font-size:1rem}.farm p{margin:0;color:var(--muted);font-size:.82rem}.farm strong{color:var(--text)}
+    .risk{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .risk article{border-top:2px solid var(--red);background:var(--surface);padding:20px;border-radius:0 0 14px 14px}
+    .risk h3{font-size:1rem;margin:0 0 7px}.risk p{font-size:.82rem;color:var(--muted);margin:0}
+    .method{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .method ul{margin:10px 0 0;padding-left:1.2em;color:#c3cbd1;font-size:.86rem}
+    .sources{columns:2;column-gap:36px;margin:0;padding:0;list-style:none;counter-reset:src}
+    .sources li{break-inside:avoid;counter-increment:src;margin:0 0 13px;padding-left:2.2em;position:relative;color:var(--muted);font-size:.8rem;line-height:1.55}
+    .sources li:before{content:"[" counter(src) "]";position:absolute;left:0;color:var(--gold2);font-weight:800}
+    .sources a{color:#cdd4da}
+    footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:.78rem}
+    .muted{color:var(--muted)}
+    @media(max-width:900px){
+      .verdict{grid-template-columns:1fr 1fr}.panel.primary{grid-column:1/-1}
+      .timeline{grid-template-columns:1fr 1fr}.build-grid{grid-template-columns:1fr}
+      .shift-grid,.farm-grid{grid-template-columns:1fr 1fr}.section-head{grid-template-columns:1fr;gap:12px}
+    }
+    @media(max-width:620px){
+      .wrap{width:min(100% - 24px,1180px)}.hero{min-height:auto;padding:70px 0 40px}.hero:after{top:.05em}
+      .verdict,.timeline,.shift-grid,.farm-grid,.risk,.method{grid-template-columns:1fr}.panel.primary{grid-column:auto}
+      .bar-row{grid-template-columns:115px 1fr 46px;gap:8px}.build-top,.build-body{padding-left:18px;padding-right:18px}
+      .mechanic{grid-template-columns:1fr}.mechanic span:not(:last-child):after{content:"⌄";right:50%;top:auto;bottom:-15px;transform:translateX(50%)}
+      .sources{columns:1}.mini-grid{grid-template-columns:1fr}.hero-lead{font-size:.98rem}
+    }
+    @media print{
+      :root{--bg:#fff;--surface:#fff;--surface2:#f5f5f3;--line:#d7d7d2;--text:#171717;--muted:#555;--gold:#8b5d14;--gold2:#6f4708}
+      body{background:#fff}.nav,.filters{display:none}.hero{min-height:auto;padding:30px 0}.hero:after{display:none}
+      main{padding:30px 0}.panel,.build,.table-wrap{box-shadow:none}.build-grid{display:block}.build{break-inside:avoid;margin-bottom:14px}
+      section{margin-bottom:40px}.sources{columns:2}a{color:#333;text-decoration:none}
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Path of Exile 2 · Meta Retrospective</div>
+      <h1>0.5 ビルドメタ<br>振り返り</h1>
+      <p class="hero-lead">事前のリーグスターター予想はどこまで当たり、何が実戦で化けたのか。<br>低予算・最上位・変わり種を、メカニクスとファーム適性から再評価する。</p>
+      <div class="meta"><span><strong>対象</strong> Return of the Ancients / Runes of Aldur</span><span><strong>基準パッチ</strong> 0.5.4</span><span><strong>調査日</strong> 2026-07-11</span></div>
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="ページ内ナビゲーション"><div class="wrap nav-inner">
+    <a href="#summary">結論</a><a href="#timeline">環境推移</a><a href="#popularity">人気度</a><a href="#comparison">総合比較</a><a href="#builds">ビルド詳細</a><a href="#expectations">事前予想の答え合わせ</a><a href="#farm">ファーム適性</a><a href="#risks">注意点</a><a href="#sources">出典</a>
+  </div></nav>
+
+  <main class="wrap">
+    <section id="summary">
+      <div class="section-head"><h2>先に結論</h2><p>0.5は「安全牌が崩れたリーグ」ではない。強いと見られた遠隔・凍結・Twisterは概ねそのまま強く、そこへ新アセンダンシーと新規相互作用が上書きした。</p></div>
+      <div class="verdict">
+        <article class="panel primary"><div class="kicker">Meta verdict</div><div class="big">最大の勝者は<br>Hollow Form Martial Artist</div><p>Lochtonial Caressでクローンから各種チャージを循環させ、Whirling Assaultを多重化。火力・範囲・防御が同じ仕組みで伸び、リーグ開始後に発見された代表的な“想定超え”だった。</p></article>
+        <article class="panel"><div class="kicker">予想的中</div><div class="stat">Twister</div><p>安い、速い、狭い場所で強烈。Spirit Walkerだけでなく複数アセンダンシーへ拡散した。</p></article>
+        <article class="panel"><div class="kicker">低予算賞</div><div class="stat">Mortar</div><p>Stormblast起爆型とBallista型の両方が、低投資でボス・進行の壁を壊した。</p></article>
+        <article class="panel"><div class="kicker">発明賞</div><div class="stat">Ice Wall</div><p>Glacial Boltの氷壁を自動破壊して広域連鎖。高負荷だが0.5らしい派手な発見。</p></article>
+      </div>
+    </section>
+
+    <section id="timeline">
+      <div class="section-head"><h2>環境の推移</h2><p>大型バランス調整より、Runic Ward、Kalguuranスキル、新アセンダンシー、ユニーク抽出・ルーンによる組合せ増加がメタを動かした。</p></div>
+      <div class="timeline">
+        <article class="time"><time>5月21日</time><strong>パッチノート公開</strong><p>Twister、Ice Shot、Permafrost、Grenade、ED/Contagionが安全なスターター候補に。Poisonburstは持続・品質低下で後退。</p></article>
+        <article class="time"><time>5月29日</time><strong>0.5.0 開幕</strong><p>Spirit Walkerが早期進行で好成績。Martial Artistはビルドの幅が広く、Hollow Form検証が進む。</p></article>
+        <article class="time"><time>6月上旬</time><strong>相互作用が確立</strong><p>Hollow Form＋Lochtonial Caress、Stormblast事前設置、Taming Twisterなどが共有され、火力天井が急上昇。</p></article>
+        <article class="time"><time>6月24日以降</time><strong>0.5.4 定着期</strong><p>キャラクター大幅弱体化は少なく、Atlas・Expedition改善が中心。強ビルドの序列は大きく崩れず、変わり種の開拓が続く。</p></article>
+      </div>
+    </section>
+
+    <section id="popularity">
+      <div class="section-head"><h2>人気度スナップショット</h2><p>poe.ninjaのRunes of Aldur掲載キャラクターにおけるアセンダンシー比率。上位レベル・公開キャラクター中心で、全プレイヤー人口そのものではない。</p></div>
+      <div class="panel">
+        <div class="bars" aria-label="アセンダンシー人気度">
+          <div class="bar-row"><span>Martial Artist</span><div class="track"><div class="fill" style="--v:100"></div></div><b>20.7%</b></div>
+          <div class="bar-row"><span>Gemling Legionnaire</span><div class="track"><div class="fill" style="--v:73.4"></div></div><b>15.2%</b></div>
+          <div class="bar-row"><span>Spirit Walker</span><div class="track"><div class="fill" style="--v:62.8"></div></div><b>13.0%</b></div>
+          <div class="bar-row"><span>Deadeye</span><div class="track"><div class="fill" style="--v:38.6"></div></div><b>8.0%</b></div>
+          <div class="bar-row"><span>Oracle</span><div class="track"><div class="fill" style="--v:26.1"></div></div><b>5.4%</b></div>
+          <div class="bar-row"><span>Stormweaver</span><div class="track"><div class="fill" style="--v:24.6"></div></div><b>5.1%</b></div>
+        </div>
+        <div class="note">Martial Artist首位はWhirling Assaultだけの数字ではないが、poe.ninja上でもHollow Form／Whirling Assaultのまとまった採用が確認できる。GemlingはGlacial Bolt、Grenade、Twisterなど複数系統が混在するため、特定ビルドの人気と同一視しないこと。</div>
+      </div>
+    </section>
+
+    <section id="comparison">
+      <div class="section-head"><h2>総合比較</h2><p>★は5段階の相対評価。人気は公開ラダー、主要ガイドの露出、継続的な更新状況を合成した編集評価で、厳密な使用率ではない。</p></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ビルド</th><th>位置づけ</th><th>人気</th><th>初期費用</th><th>マップ</th><th>ボス</th><th>耐久</th><th>操作性</th><th>向くファーム</th></tr></thead>
+          <tbody>
+            <tr><td>Hollow Whirling MA</td><td><span class="tag op">圧倒的</span></td><td><span class="score"><i>★★★★★</i></span></td><td>中</td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★★</i></span></td><td>慣れ必要</td><td>全般・高難度</td></tr>
+            <tr><td>Twister Spirit Walker</td><td><span class="tag op">予想的中</span></td><td><span class="score"><i>★★★★★</i></span></td><td>低</td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★</i>★</span></td><td>多ボタン</td><td>高速マップ・狭いボス</td></tr>
+            <tr><td>Ice Shot Deadeye</td><td><span class="tag safe">王道</span></td><td><span class="score"><i>★★★★</i>★</span></td><td>低〜中</td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★</i>★★</span></td><td>快適</td><td>高速マップ・ボス周回</td></tr>
+            <tr><td>Stormblast / Mortar</td><td><span class="tag budget">格安ボス</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>極低</td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★</i>★★</span></td><td>仕込み必要</td><td>ボス・資金作り</td></tr>
+            <tr><td>Mortar Ballista Warbringer</td><td><span class="tag budget">格安万能</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>低</td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★★</i></span></td><td>楽</td><td>Expedition・Ritual</td></tr>
+            <tr><td>ED / Contagion Lich</td><td><span class="tag budget">堅実</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>低</td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★</i>★★</span></td><td><span class="score"><i>★★★★★</i></span></td><td>楽</td><td>安全進行・密集コンテンツ</td></tr>
+            <tr><td>Permafrost / Frag</td><td><span class="tag safe">予想以上</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>低</td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>2ボタン</td><td>Abyss・Expedition・Ritual</td></tr>
+            <tr><td>Glacial Bolt Gemling</td><td><span class="tag fun">発明系</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>中〜高</td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★</i>★★★</span></td><td>派手</td><td>高密度・Delirium</td></tr>
+            <tr><td>Spirit Walker Beast Master</td><td><span class="tag fun">テーマ型</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>低〜中</td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★</i>★</span></td><td>非常に楽</td><td>ボス・安全周回</td></tr>
+            <tr><td>Rampage Bear Shaman</td><td><span class="tag fun">爽快</span></td><td><span class="score"><i>★★★</i>★★</span></td><td>中</td><td><span class="score"><i>★★★★★</i></span></td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★★★</i></span></td><td>快適</td><td>高速マップ・混戦</td></tr>
+            <tr><td>Bloom Bomb Abyssal Lich</td><td><span class="tag fun">実験枠</span></td><td><span class="score"><i>★</i>★★★★</span></td><td>中</td><td><span class="score"><i>★★★★</i>★</span></td><td><span class="score"><i>★★★</i>★★</span></td><td><span class="score"><i>★★★★</i>★</span></td><td>独特</td><td>パック密度型</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="builds">
+      <div class="section-head"><h2>ビルド詳細と<br>メカニクス</h2><p>タグで絞り込み可能。各評価は完成形だけでなく、キャンペーンからT15、主要ボスへ移るまでの立ち上がりも含む。</p></div>
+      <div class="filters" role="group" aria-label="ビルド絞り込み">
+        <button class="filter active" data-filter="all">すべて</button><button class="filter" data-filter="op">圧倒的</button><button class="filter" data-filter="budget">低予算</button><button class="filter" data-filter="starter">事前注目</button><button class="filter" data-filter="fun">面白い</button>
+      </div>
+      <div class="build-grid">
+        <article class="build" data-tags="op fun">
+          <div class="build-top"><div class="build-topline"><div><h3>Hollow Form Whirling Assault</h3><div class="class">Monk · Martial Artist</div></div><span class="num">01</span></div><div class="tags"><span class="tag op">リーグ後発見</span><span class="tag op">S+</span><span class="tag">全コンテンツ</span></div></div>
+          <div class="build-body"><p>Hollow FormがPower Chargeを消費してWhirling Assaultを使う分身を展開。分身は自分の攻撃を複製するため、単体スキルの制約を越えて同時ヒット数と画面占有率を増やす。</p>
+            <div class="mechanic"><span>Hollow Form<br>分身を生成</span><span>Lochtonial Caress<br>分身が味方へCharge供給</span><span>Charge Regulation<br>火力・防御・速度へ変換</span></div>
+            <p>Way of the StonefistとLochtonial Caressの組合せで、分身側のヒットがプレイヤーへ各種チャージを戻す。常時チャージに近づくほどCharge Regulationが<strong>クリティカル・防御・Skill Speed</strong>を同時に押し上げる。Tempest Bell／Hollow Resonance型は分身の回転攻撃を複数Bellへ当て、さらにヒット密度を増幅する。</p>
+            <div class="mini-grid"><div><h4>なぜ壊れたか</h4><p>攻撃の多重化とチャージ循環が同じループで完結。装備更新が火力・耐久・快適性すべてに効く。</p></div><div><h4>弱点</h4><p>Mana維持、画面負荷、クリック移動時の切断・クラッシュ報告。挙動修正リスクも高い。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/builds/hollow-form-whirling-bells-medieval-marty" target="_blank" rel="noreferrer">メカニクス解説を見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="op starter budget">
+          <div class="build-top"><div class="build-topline"><div><h3>Twister</h3><div class="class">Huntress · Spirit Walker（ほかDeadeye / Gemling等）</div></div><span class="num">02</span></div><div class="tags"><span class="tag op">予想的中</span><span class="tag budget">スターター可</span><span class="tag">高速</span></div></div>
+          <div class="build-body"><p>Whirling Slash等で準備し、Twisterの複数投射物を放つコンボ。Projectile Speed、持続時間、範囲、追加投射物、Elemental Groundと通常の攻撃倍率を重ねられるスケーリング軸の多さが本体。</p>
+            <div class="mechanic"><span>Whirling系<br>コンボ準備</span><span>Twister<br>複数投射</span><span>壁反射・Ground<br>多段ヒット</span></div>
+            <p>Spirit WalkerのOwl系ボーナスはProjectile Speedと追加投射物を伸ばし、壁のある狭い空間では反射・滞留したTwisterが単体へ重なる。終盤はThe Tamingで複数Elemental Groundの恩恵をまとめ、Barrage、Frenzy Charge、Olroth's Conviction、Uhtred's Constellationなどで投射数と瞬間火力を拡張する型が成立。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>キャンペーン、一般マップ、狭いボス部屋。低投資から速く、凍結で防御も補える。</p></div><div><h4>苦手</h4><p>Arbiterのような巨大な開放アリーナ。Attack-to-moveと多ボタン操作が合わない人もいる。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/tier-list" target="_blank" rel="noreferrer">0.5 Tier List解説を見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="starter budget">
+          <div class="build-top"><div class="build-topline"><div><h3>Ice Shot / Snipe</h3><div class="class">Ranger · Deadeye</div></div><span class="num">03</span></div><div class="tags"><span class="tag safe">王道</span><span class="tag budget">必須Uniqueなし</span><span class="tag">高速</span></div></div>
+          <div class="build-body"><p>Ice Shotで広範囲を凍結・粉砕し、単体はSnipeで大きな一撃を入れる。Deadeyeの移動・投射物性能と「敵が動く前に凍らせる」防御が噛み合う、分かりやすいSoftcore向け完成形。</p>
+            <div class="mechanic"><span>Ice Shot<br>冷気範囲＋Freeze</span><span>Herald系<br>連鎖クリア</span><span>Snipe<br>ボスへ高倍率Hit</span></div>
+            <p>0.5でIce ShardのFreeze Buildup増加は削除されたが、骨格は維持。序盤から弓更新がそのままDPSへ反映され、マップ突入直後も凍結が不足防御を埋める。投資後はpoe.ninjaの上位例でIce Shot推定DPSが数百万〜約1,000万級まで見えるが、これは完成装備の参考値で実戦DPSの保証ではない。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>高速マッピングとボス周回を1キャラで両立。視認性と操作感も比較的素直。</p></div><div><h4>弱点</h4><p>装備が整う前の被弾耐性は低め。凍結不能・高難度で防御不足が露出する。</p></div></div>
+            <a class="source-link" href="https://poe.ninja/poe2/builds/runesofaldur?class=Deadeye&amp;skills=Ice+Shot" target="_blank" rel="noreferrer">公開キャラクター例を見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="budget starter op">
+          <div class="build-top"><div class="build-topline"><div><h3>Stormblast Bolts / Mortar Cannon</h3><div class="class">Mercenary · Tactician</div></div><span class="num">04</span></div><div class="tags"><span class="tag budget">格安ボスキラー</span><span class="tag op">瞬間火力</span><span class="tag">仕込み型</span></div></div>
+          <div class="build-body"><p>ボス出現前にStormblast projectileを多数設置し、耐性低下・Shockを入れてからMortar Cannonで一括起爆する。安いCrossbowでも「事前設置した弾数」が実質的な火力倍率になる。</p>
+            <div class="mechanic"><span>Stormblast<br>大量に事前設置</span><span>Curse・Frost Bomb<br>Shockで被ダメ増</span><span>Mortar Cannon<br>一括起爆</span></div>
+            <p>Elemental WeaknessとFrost Bombで耐性を下げ、武器セット側のStormcaller Arrow等でShockを確保。通常マップはGalvanic Shards／Supporting Fireなどで画面処理し、ボスだけ起爆ローテーションへ切り替える。ごく安価な武器から成立する一方、動き続ける相手や仕込み不可の戦闘では理論値が落ちる。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>リーグ初期のボス売り・鍵消化・装備資金作り。火力単価が極めて高い。</p></div><div><h4>弱点</h4><p>Weapon Swapと準備手順が必要。マップの快適性は専業クリア型より一段下。</p></div></div>
+            <a class="source-link" href="https://www.aoeah.com/news/4594--top-2-poe-2-05-best-budget-builds-return-of-the-ancients" target="_blank" rel="noreferrer">低予算構成の解説を見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="budget">
+          <div class="build-top"><div class="build-topline"><div><h3>Mortar Cannon Ballista</h3><div class="class">Warrior · Warbringer</div></div><span class="num">05</span></div><div class="tags"><span class="tag budget">低予算</span><span class="tag safe">高耐久</span><span class="tag">1ボタン寄り</span></div></div>
+          <div class="build-body"><p>Mortar CannonをBallista Totem化し、Cluster Grenadeの面制圧を自動化。物理武器DPSとGem Levelの寄与が大きく、必須高額Uniqueなしでも基礎火力を作りやすい。</p>
+            <div class="mechanic"><span>Ballista設置<br>安全距離を確保</span><span>Mortar Cannon<br>Cluster Grenade</span><span>Warbringer<br>追加Totem＋防御</span></div>
+            <p>Answered Call系でトーテム数、Wooden Wall系で防御を得る。硬い敵だけVoltaic GrenadeでShock、Oil Grenadeで補助。高いTotem Placement Speedで走りながら置くとクリアが滑らかになる。Rigwald's Ferocityを使う構成では武器セット位置によるダメージペナルティに注意。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>危険なRemnant、Ritual、Expeditionの定点戦。本人が回避に集中できる。</p></div><div><h4>弱点</h4><p>即時着弾ビルドよりテンポは遅い。Gem Levelと武器更新を忘れると急に伸び悩む。</p></div></div>
+            <a class="source-link" href="https://www.poe-vault.com/poe2/warrior/warbringer/totems-build-guide" target="_blank" rel="noreferrer">構成ガイドを見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="budget starter">
+          <div class="build-top"><div class="build-topline"><div><h3>Essence Drain / Contagion</h3><div class="class">Witch · Lich</div></div><span class="num">06</span></div><div class="tags"><span class="tag budget">低予算</span><span class="tag safe">初心者向け</span><span class="tag">高耐久</span></div></div>
+          <div class="build-body"><p>Essence DrainのChaos DoTをContagionで周囲へ伝播。1体を起点にパック全体へ感染が伸びるため、武器DPSに依存しにくく、キャスト後は回避へ移れる。</p>
+            <div class="mechanic"><span>Contagion<br>感染対象を作る</span><span>Essence Drain<br>DoTを付与</span><span>敵死亡<br>周囲へ伝播</span></div>
+            <p>LichはSoulless Form、Eternal Life、Atziri's Disdain等を使うES型で、ガイド例では高ES・高速Rechargeを重ねる。0.5のES／回復弱体化の逆風はあるが、敵に張り付かず継続ダメージを維持できるため、低投資の安定性は残った。単体はDark Effigy等を足し、DoTの重ね方で補う。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>密集マップ、安全な初回T15到達、SSF。装備価格が高騰しにくい。</p></div><div><h4>弱点</h4><p>単体瞬間火力はメタ上位より低く、フェーズボスや散開した敵でテンポが落ちる。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/builds/chaos-dot-lich-starter-deadrabbit" target="_blank" rel="noreferrer">0.5スターターガイドを見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="starter budget">
+          <div class="build-top"><div class="build-topline"><div><h3>Permafrost Bolts / Fragmentation Rounds</h3><div class="class">Mercenary · Witchhunter（Tactician経由も可）</div></div><span class="num">07</span></div><div class="tags"><span class="tag safe">予想以上</span><span class="tag budget">SSF可</span><span class="tag">凍結爆破</span></div></div>
+          <div class="build-body"><p>Permafrost Boltsで敵と地形を凍らせ、Fragmentation RoundsでFrozen対象を破砕して大きな範囲バーストを得る、明快な2段コンボ。</p>
+            <div class="mechanic"><span>Permafrost<br>Freezeを蓄積</span><span>Herald / Inquisition<br>パックを連鎖爆破</span><span>Fragmentation<br>凍結対象をBurst</span></div>
+            <p>一般敵はHerald of IceとZealous Inquisitionで1ボタンに近い連鎖クリア。単体はFreezing MarkでFreezeを早めてFragmentation Roundsへ。Tacticianで序盤のSupporting FireとSpirit効率を取り、後からWitchhunterのNo Mercy／Sorcery Wardへ寄せる案もある。弾薬とWeapon Set管理は必要だが、実戦報告ではAbyss・Expedition・Ritualまで広く対応。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>平均的な装備でLv1からT15まで繋がる。凍結が攻防を兼ねる。</p></div><div><h4>弱点</h4><p>序盤は脆く、Reload／弾薬切替が苦手だと操作感が悪化。Freeze耐性相手は回転が落ちる。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/builds/pohx-shatter-tactician" target="_blank" rel="noreferrer">SSFガイドを見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="fun op">
+          <div class="build-top"><div class="build-topline"><div><h3>Glacial Bolt Shatter</h3><div class="class">Mercenary · Gemling Legionnaire</div></div><span class="num">08</span></div><div class="tags"><span class="tag fun">発見枠</span><span class="tag op">超広域</span><span class="tag">GPU注意</span></div></div>
+          <div class="build-body"><p>Glacial Boltで大量のIce Wallを作り、それをInfernal Cry＋Vruun's Aftermath、Breaking Frost、Verisium Manifestationsなどでほぼ即時に破壊。壁1枚ごとの爆発を画面全体へ重ねる。</p>
+            <div class="mechanic"><span>Glacial Bolt<br>Ice Wall大量生成</span><span>自動／Cry破壊<br>壁を一斉起爆</span><span>AoE・Verglas<br>爆発を増幅</span></div>
+            <p>GemlingのAoEとGem Qualityを使い、VerglasでIce Crystal LifeをCold Damageへ変換する型が代表的。壁の生成数×壁耐久由来倍率×広域破壊がショットガン的に重なる。火力は最上位級だが、200% Deliriumやボスに持ち込むには防御投資が必要という実プレイ報告もある。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>高密度マップ、Delirium、画面一掃。見た目と効果音の満足度が高い。</p></div><div><h4>弱点</h4><p>防御完成前はワンショットに弱い。エフェクト数が多く、PC負荷・視認性が最大の敵。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/profile/lolcohol/builds/0-5-glacial-bolt-shatterscream-gemling" target="_blank" rel="noreferrer">Shatter構成を見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="fun budget">
+          <div class="build-top"><div class="build-topline"><div><h3>Beast Master Companion</h3><div class="class">Huntress · Spirit Walker</div></div><span class="num">09</span></div><div class="tags"><span class="tag fun">固有ボス捕獲</span><span class="tag safe">安全</span><span class="tag">AFK寄り</span></div></div>
+          <div class="build-body"><p>Spirit WalkerのTame BeastでUnique Beast BossをCompanion化し、Wolf PackやSpectral Bearと一緒に戦わせる。0.5の新アセンダンシーを最もテーマ通りに使う型。</p>
+            <div class="mechanic"><span>Tame Beast<br>Unique Bossを捕獲</span><span>Companion Army<br>複数体で攻撃</span><span>Command<br>単体へ集中</span></div>
+            <p>捕獲候補ごとに挙動と基礎性能が異なり、Mighty Silverfistは高い基礎Critと追加Critボーナスにより単体候補として評価が高い。装備よりCompanion側の基礎値に依存する割合が大きく、低〜中投資でも機能。ただしAct 3付近までTwisterで育成してからMinionへ移る案が一般的。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>安全なボス、ながら周回、ミニオン好き。プレイヤーは回避とCommandに集中できる。</p></div><div><h4>弱点</h4><p>人によっては“walking simulator”に感じる。AIと捕獲対象の性能差に左右される。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/builds/spirit-walker-beast-master" target="_blank" rel="noreferrer">Beast Masterガイドを見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="fun starter">
+          <div class="build-top"><div class="build-topline"><div><h3>Rampage Bear</h3><div class="class">Druid · Shaman</div></div><span class="num">10</span></div><div class="tags"><span class="tag fun">爽快</span><span class="tag safe">高耐久</span><span class="tag">高速近接</span></div></div>
+          <div class="build-body"><p>Bear FormのRampageで敵群を轢き、Walking CalamityとHeraldで連鎖クリア。ボスではShockwave Totemを加え、Rampageの多段と設置火力を重ねる。</p>
+            <div class="mechanic"><span>Bear Form<br>高い基礎耐久</span><span>Rampage<br>移動しながら多段</span><span>Calamity / Herald<br>連鎖処理</span></div>
+            <p>“硬いが遅い変身”になりがちなDruidを、Rampage維持と範囲爆発で高速マッパーへ変える。0.4からの実績があり、0.5では新防御とクラフトで伸ばしやすい。リーグ後の完全新規発見ではないが、過密化した0.5 Endgameと噛み合って再評価された。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>高密度マップ、混戦、長い周回。耐久と速度のバランスがよい。</p></div><div><h4>弱点</h4><p>変身・Totemを含む構成理解が必要。最高峰の瞬間ボス火力では専業型に負ける。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" rel="noreferrer">Rampage Bearガイドを見る ↗</a>
+          </div>
+        </article>
+
+        <article class="build" data-tags="fun">
+          <div class="build-top"><div class="build-topline"><div><h3>Bloom Bombing</h3><div class="class">Witch · Abyssal Lich</div></div><span class="num">11</span></div><div class="tags"><span class="tag fun">実験枠</span><span class="tag">花火</span><span class="tag">新Unique</span></div></div>
+          <div class="build-body"><p>0.5で再設計されたThe Hollow MaskのWildwood's Giftsが花のRemnantを自動生成し、それをExplosive Transmutationで拾うたびに爆破する。</p>
+            <div class="mechanic"><span>Hollow Mask<br>花を自動生成</span><span>Remnant回収<br>資源を作る</span><span>Explosive Transmutation<br>花を爆弾化</span></div>
+            <p>敵へ直接撃つのではなく、フィールドに生じるオブジェクトを攻撃資源へ変換する0.5らしい構築。完成情報がまだ少なく、メタ上位の安定性より“仕組みを成立させる面白さ”が価値。Abyssal Lichの防御・Chaos寄りの土台へ組み込みやすい。</p>
+            <div class="mini-grid"><div><h4>得意</h4><p>パック密度が高く、花を連続回収できるマップ。独自性はトップ級。</p></div><div><h4>弱点</h4><p>単体・散開敵で回転が不安定。ガイド更新が新しく、評価は暫定。</p></div></div>
+            <a class="source-link" href="https://mobalytics.gg/poe-2/builds/kalltorak-bloom-bombing-abyssal-lich" target="_blank" rel="noreferrer">実験ビルドを見る ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="expectations">
+      <div class="section-head"><h2>事前予想の<br>答え合わせ</h2><p>スターター評価と、リーグ後に分かった天井を分けて見ると誤解が少ない。</p></div>
+      <div class="shift-grid">
+        <article class="shift"><div class="arrow">↗</div><h3>Twister：S → S+</h3><p>Spirit Walker専用の強スターターという予想から、The Taming等の相互作用が進み、複数アセンダンシーで使えるエンドゲームエンジンへ。</p></article>
+        <article class="shift"><div class="arrow">→</div><h3>Ice Shot：S → S</h3><p>Freeze Buildupの一部低下はあったが、速度・凍結・Snipe単体火力が揃う王道。予想通り強い。</p></article>
+        <article class="shift"><div class="arrow">↗</div><h3>Permafrost：A → A+</h3><p>“堅実な2ボタン”から、Herald／Inquisitionによる1ボタン級クリアと幅広いファーム適性が実証された。</p></article>
+        <article class="shift"><div class="arrow">→</div><h3>ED/Contagion：A → A</h3><p>ES・回復弱体化で無傷ではないが、安価・安全・装備非依存というスターター価値は維持。ボス速度だけ上位に譲る。</p></article>
+        <article class="shift"><div class="arrow">↗</div><h3>Grenade系：A → S級の費用対効果</h3><p>TacticianのStormblast仕込みとWarbringerのBallista化が別々の答えを提示。低予算の進行・資金作りで突出。</p></article>
+        <article class="shift"><div class="arrow">↓</div><h3>Poisonburst：相対後退</h3><p>Poison duration短縮、品質のMagnitude低下、Pathfinder側の持続ペナルティ増加により、事前から警戒された通り優先度を落とした。</p></article>
+      </div>
+    </section>
+
+    <section id="farm">
+      <div class="section-head"><h2>目的別の選び方</h2><p>「強さ」を一つの点数に潰すより、稼ぎ方と戦闘空間に合わせるほうが0.5では重要。</p></div>
+      <div class="farm-grid">
+        <article class="farm"><h3>高速一般マップ</h3><p><strong>Twister / Ice Shot / Rampage Bear</strong><br>移動と攻撃が繋がり、広範囲処理と凍結・爆発を両立。</p></article>
+        <article class="farm"><h3>高密度・Delirium</h3><p><strong>Hollow Whirling / Glacial Bolt</strong><br>ヒット数・爆発数が敵密度を火力へ変換。PC負荷は要確認。</p></article>
+        <article class="farm"><h3>Expedition / Remnant</h3><p><strong>Mortar Ballista / Permafrost / ED</strong><br>安全距離、凍結、継続ダメージで危険Modifierの混戦を処理。</p></article>
+        <article class="farm"><h3>ボス専業</h3><p><strong>Stormblast / Hollow Whirling / Ice Shot</strong><br>事前設置または高い瞬間DPS。狭い部屋ならTwisterも最上位。</p></article>
+        <article class="farm"><h3>ながら・低操作</h3><p><strong>Beast Master / Mortar Ballista / ED</strong><br>Companion、Totem、DoTに攻撃を任せ、回避へ集中できる。</p></article>
+        <article class="farm"><h3>変わった体験</h3><p><strong>Bloom Bomb / Glacial Bolt</strong><br>花の回収爆破、氷壁の一斉破壊など、0.5新要素を主役にできる。</p></article>
+      </div>
+    </section>
+
+    <section id="risks">
+      <div class="section-head"><h2>選ぶ前の注意点</h2><p>0.5.4時点のスナップショット。0.5.5のイベント／調整が予告段階にあり、相互作用依存の構成は修正される可能性がある。</p></div>
+      <div class="risk">
+        <article><h3>Hollow Formは挙動修正リスクが高い</h3><p>分身・味方・チャージの扱いが強さの核。クラッシュや“too many actions”切断報告もあり、最強＝最も安全な投資先とは限らない。</p></article>
+        <article><h3>poe.ninjaは上澄みサンプル</h3><p>上位レベル・公開キャラクターが中心。掲載率が低い安価スターターや、到達前にリロールした層は見えにくい。</p></article>
+        <article><h3>価格はリーグ時点で変わる</h3><p>「低予算」は仕組みが成立する最低ライン。人気Unique、Lineage Support、良品Runeの価格高騰まで保証しない。</p></article>
+        <article><h3>推定DPSは横比較の補助</h3><p>壁反射、事前設置、分身、Shotgun、DoT伝播は計算表示と実戦が一致しにくい。動画の理想条件だけで判断しない。</p></article>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-head"><h2>調査方法と出典</h2><p>公式情報を仕様の基準にし、公開ラダーを人気度、ビルドガイドとコミュニティ報告を実戦評価の補助に使用。</p></div>
+      <div class="method">
+        <div class="panel"><div class="kicker">評価ルール</div><ul><li>マップ・ボス・耐久は同一予算での相対評価</li><li>「低予算」は必須高額Uniqueなし、または安価装備でT15進行可能</li><li>人気度は厳密な全人口比ではなく、ラダーとガイド露出の合成</li><li>販売サイト系記事は補助情報に限定し、公式・poe.ninja・詳細ガイドで照合</li></ul></div>
+        <div class="panel"><div class="kicker">対象範囲</div><ul><li>0.5.0（2026-05-29）から0.5.4まで</li><li>StandardではなくRunes of Aldur中心</li><li>Softcore Tradeを主軸、SSF適性は個別注記</li><li>価格・人気は2026-07-11時点のスナップショット</li></ul></div>
+      </div>
+      <ol class="sources">
+        <li><a href="https://www.pathofexile.com/forum/view-thread/3932540" target="_blank" rel="noreferrer">GGG — Content Update 0.5.0 Patch Notes</a></li>
+        <li><a href="https://www.pathofexile.com/forum/view-thread/3949197" target="_blank" rel="noreferrer">GGG — 0.5.1 Patch Notes</a></li>
+        <li><a href="https://www.pathofexile.com/forum/view-thread/3960375" target="_blank" rel="noreferrer">GGG — 0.5.2 Patch Notes</a></li>
+        <li><a href="https://www.pathofexile.com/forum/view-thread/3968601" target="_blank" rel="noreferrer">GGG — 0.5.3 Patch Notes</a></li>
+        <li><a href="https://www.pathofexile.com/forum/view-thread/3975218" target="_blank" rel="noreferrer">GGG — 0.5.4 Patch Notes</a></li>
+        <li><a href="https://poe.ninja/poe2/builds/" target="_blank" rel="noreferrer">poe.ninja — PoE 2 Builds / Ascendancy Share</a></li>
+        <li><a href="https://poe.ninja/poe2/builds/runesofaldur" target="_blank" rel="noreferrer">poe.ninja — Runes of Aldur Builds</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/tier-list" target="_blank" rel="noreferrer">Mobalytics — 0.5 League Starter Tier List</a></li>
+        <li><a href="https://www.reddit.com/r/pathofexile2builds/comments/1tny1to/05_return_of_the_ancients_league_starter_build/" target="_blank" rel="noreferrer">r/pathofexile2builds — 0.5 Starter Build Index</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/profile/nicktew/builds/0-5-twister-martial-artist-very-broken" target="_blank" rel="noreferrer">NickTew — 0.5 Twister Martial Artist</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/builds/hollow-form-whirling-bells-medieval-marty" target="_blank" rel="noreferrer">Hollow Form Whirling Bells — mechanics guide</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/builds/chaos-dot-lich-starter-deadrabbit" target="_blank" rel="noreferrer">ED / Contagion Lich — starter guide</a></li>
+        <li><a href="https://www.poe-vault.com/poe2/warrior/warbringer/totems-build-guide" target="_blank" rel="noreferrer">PoE Vault — Grenade Ballista Totems Warbringer</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/builds/pohx-shatter-tactician" target="_blank" rel="noreferrer">Pohx — Permafrost / Fragmentation SSF</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/profile/lolcohol/builds/0-5-glacial-bolt-shatterscream-gemling" target="_blank" rel="noreferrer">Glacial Bolt Shattershout Gemling</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/builds/spirit-walker-beast-master" target="_blank" rel="noreferrer">CaptainLance9 — Spirit Walker Beast Master</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/builds/bear-druid-build-league-starter-to-endgame" target="_blank" rel="noreferrer">Shaman Rampage Bear — starter to endgame</a></li>
+        <li><a href="https://mobalytics.gg/poe-2/builds/kalltorak-bloom-bombing-abyssal-lich" target="_blank" rel="noreferrer">Bloom Bombing Abyssal Lich</a></li>
+        <li><a href="https://www.reddit.com/r/pathofexile2builds/comments/1ultxpq/gemling_glacial_bolt_strongest_offmeta_build_ive/" target="_blank" rel="noreferrer">Community report — Glacial Bolt defenses</a></li>
+        <li><a href="https://www.reddit.com/r/pathofexile2builds/comments/1ts25db/lochtonial_caress_hollow_form_is_the_most_fun_ive/" target="_blank" rel="noreferrer">Community discovery — Lochtonial Caress + Hollow Form</a></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer><div class="wrap">本レポートは公開情報をもとにした独立調査であり、Grinding Gear Games、poe.ninja、各ビルド作者の公式見解ではありません。ゲームはEarly Access中のため、数値・挙動・価格は更新で変化します。</div></footer>
+  <script>
+    const buttons=[...document.querySelectorAll('.filter')];
+    const builds=[...document.querySelectorAll('.build')];
+    buttons.forEach(button=>button.addEventListener('click',()=>{
+      buttons.forEach(b=>b.classList.remove('active'));button.classList.add('active');
+      const filter=button.dataset.filter;
+      builds.forEach(card=>card.hidden=filter!=='all'&&!card.dataset.tags.split(' ').includes(filter));
+    }));
+  </script>
+</body>
+</html>

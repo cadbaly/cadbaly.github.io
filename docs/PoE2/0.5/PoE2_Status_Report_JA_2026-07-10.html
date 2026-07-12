@@ -1,1 +1,305 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Path of Exile 2 0.5.4b時点の現状・変更点・1.0までの注目点を整理した日本語レポート">
+  <title>Path of Exile 2 現状整理レポート — 2026-07-10</title>
+  <style>
+    :root {
+      --ink: #1b232e;
+      --muted: #626d7b;
+      --deep: #232b36;
+      --gold: #c89b3c;
+      --gold-dark: #8b681f;
+      --pale-gold: #f5eedc;
+      --pale-blue: #edf3f7;
+      --pale-red: #f7ebea;
+      --paper: #ffffff;
+      --page: #f2f3f5;
+      --grid: #d9dee5;
+      --shadow: 0 18px 50px rgba(26, 32, 42, .10);
+      --radius: 14px;
+    }
 
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--page);
+      font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, system-ui, sans-serif;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--gold-dark); text-underline-offset: 3px; }
+    a:hover { color: #634812; }
+    .wrap { width: min(1120px, calc(100% - 32px)); margin: 30px auto 60px; }
+    .report {
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid #e5e8ec;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      position: relative;
+      padding: 64px 68px 52px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 83% 20%, rgba(200,155,60,.24), transparent 28%),
+        linear-gradient(135deg, #171d25 0%, #293340 100%);
+    }
+    .hero::after {
+      position: absolute;
+      right: -80px;
+      bottom: -130px;
+      width: 340px;
+      height: 340px;
+      border: 1px solid rgba(200,155,60,.28);
+      border-radius: 50%;
+      content: "";
+      box-shadow: 0 0 0 42px rgba(200,155,60,.035), 0 0 0 88px rgba(200,155,60,.025);
+    }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #e0b95e;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1.16; letter-spacing: -.03em; }
+    .subtitle { margin: 18px 0 0; color: #cbd2dc; font-size: clamp(.95rem, 2vw, 1.22rem); }
+    .as-of { margin-top: 26px; color: #98a3b1; font-size: .82rem; }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--grid);
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(12px);
+    }
+    .toc a { padding: 7px 12px; color: var(--muted); font-size: .82rem; font-weight: 700; text-decoration: none; white-space: nowrap; border-radius: 999px; }
+    .toc a:hover { color: var(--ink); background: var(--pale-gold); }
+
+    main { padding: 28px 68px 64px; }
+    section { scroll-margin-top: 70px; padding-top: 32px; }
+    section + section { margin-top: 38px; border-top: 1px solid #e6e8eb; }
+    .section-title { display: flex; gap: 14px; align-items: baseline; margin: 0 0 18px; line-height: 1.3; }
+    .section-title .tag { color: var(--gold-dark); font-size: .72rem; font-weight: 900; letter-spacing: .12em; }
+    .section-title h2 { margin: 0; font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -.02em; }
+    h3 { margin: 26px 0 12px; font-size: 1.1rem; }
+    p { margin: 0 0 12px; }
+    .lead { color: var(--muted); font-size: 1.02rem; }
+
+    .callout {
+      margin: 0 0 28px;
+      padding: 20px 22px;
+      border-left: 6px solid var(--gold-dark);
+      border-radius: 0 10px 10px 0;
+      background: var(--pale-gold);
+    }
+    .callout strong { color: var(--gold-dark); }
+    .callout.blue { border-left-color: #456879; background: var(--pale-blue); }
+    .callout.blue strong { color: #456879; }
+
+    .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 30px; }
+    .stat { overflow: hidden; border: 1px solid var(--grid); border-radius: 10px; background: #f8f9fa; text-align: center; }
+    .stat .label { padding: 8px; color: var(--gold); background: var(--deep); font-size: .76rem; font-weight: 800; }
+    .stat .value { padding: 16px 8px 3px; font-size: 1.16rem; font-weight: 900; }
+    .stat .note { padding: 0 8px 13px; color: var(--muted); font-size: .76rem; }
+
+    .table-wrap { overflow-x: auto; margin: 12px 0 24px; border: 1px solid var(--grid); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; line-height: 1.6; }
+    th { padding: 11px 12px; color: #fff; background: var(--deep); font-size: .78rem; text-align: center; }
+    td { padding: 10px 12px; border-top: 1px solid var(--grid); vertical-align: top; }
+    tr:nth-child(even) td { background: #f7f8fa; }
+    td.center { text-align: center; white-space: nowrap; }
+    td.topic { font-weight: 800; white-space: nowrap; }
+    td.assessment { background: var(--pale-blue) !important; }
+    tr:last-child td.assessment { background: var(--pale-red) !important; }
+
+    .observations { display: grid; gap: 10px; margin: 12px 0 24px; padding: 0; list-style: none; }
+    .observations li { position: relative; padding-left: 22px; }
+    .observations li::before { position: absolute; left: 0; top: .56em; width: 8px; height: 8px; border-radius: 50%; background: var(--gold-dark); content: ""; }
+    .observations strong { color: var(--deep); }
+
+    .choice { display: grid; grid-template-columns: 1fr 1fr; margin: 12px 0 26px; border: 1px solid var(--grid); border-radius: 10px; overflow: hidden; }
+    .choice article { padding: 18px 20px; background: var(--pale-blue); }
+    .choice article + article { border-left: 1px solid var(--grid); background: var(--pale-gold); }
+    .choice h3 { margin: 0 0 8px; font-size: 1rem; }
+
+    .sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; margin: 12px 0 0; padding: 8px 16px; background: #f8f8f9; border-radius: 10px; }
+    .sources li { padding: 8px 0; border-bottom: 1px solid #e6e8eb; font-size: .82rem; }
+    .note { margin-top: 12px; color: var(--muted); font-size: .76rem; }
+    footer { padding: 18px 68px; color: #7d8794; background: #f7f8fa; font-size: .75rem; border-top: 1px solid var(--grid); }
+
+    @media (max-width: 760px) {
+      .wrap { width: 100%; margin: 0; }
+      .report { border: 0; border-radius: 0; box-shadow: none; }
+      .hero { padding: 48px 22px 38px; }
+      main { padding: 12px 20px 44px; }
+      footer { padding: 16px 20px; }
+      .snapshot { grid-template-columns: repeat(2, 1fr); }
+      .choice, .sources { grid-template-columns: 1fr; }
+      .choice article + article { border-top: 1px solid var(--grid); border-left: 0; }
+      .section-title { display: block; }
+      .section-title .tag { display: block; margin-bottom: 4px; }
+    }
+
+    @media print {
+      @page { size: A4; margin: 12mm 13mm; }
+      body { background: #fff; font-size: 9.5pt; }
+      .wrap { width: 100%; margin: 0; }
+      .report { border: 0; border-radius: 0; box-shadow: none; }
+      .hero { padding: 15mm 14mm 11mm; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .toc { display: none; }
+      main { padding: 0 14mm 10mm; }
+      section { padding-top: 9mm; }
+      section + section { margin-top: 8mm; }
+      .snapshot { gap: 5px; }
+      table { font-size: 7.5pt; }
+      th, td { padding: 5px 6px; }
+      .table-wrap, .stat, .choice, .callout { break-inside: avoid; }
+      a { color: var(--gold-dark); text-decoration: none; }
+      footer { padding: 5mm 14mm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <article class="report">
+      <header class="hero">
+        <p class="eyebrow">PATH OF EXILE 2 / STATUS BRIEF</p>
+        <h1>現状整理レポート</h1>
+        <p class="subtitle">0.5.4b時点：大型エンドゲーム刷新後、1.0直前の現在地</p>
+        <p class="as-of">公開情報基準日：2026年7月10日（JST）</p>
+      </header>
+
+      <nav class="toc" aria-label="目次">
+        <a href="#summary">要約</a>
+        <a href="#timeline">主な変化</a>
+        <a href="#comparison">変更比較</a>
+        <a href="#watch">今後の注目点</a>
+        <a href="#decision">今遊ぶか待つか</a>
+        <a href="#sources">公開ソース</a>
+      </nav>
+
+      <main>
+        <section id="summary">
+          <div class="callout">
+            <p><strong>結論</strong>　PoE 2は、0.5.0で最大の弱点だったエンドゲームの導線と目的を大きく作り直し、初期EA版より明確に遊びやすくなった。一方、進行不能バグやクラッシュの後処理、未実装のAct・クラス、PoE 1的な高速爽快感との折り合いは、1.0まで残る主要課題である。<a href="#src-1">［1］</a><a href="#src-2">［2］</a><a href="#src-3">［3］</a></p>
+          </div>
+
+          <div class="section-title"><span class="tag">NOW</span><h2>現在のスナップショット</h2></div>
+          <div class="snapshot">
+            <div class="stat"><div class="label">現行版</div><div class="value">0.5.4b</div><div class="note">2026-07-02配信</div></div>
+            <div class="stat"><div class="label">提供形態</div><div class="value">有料EA</div><div class="note">PC / PS5 / Xbox</div></div>
+            <div class="stat"><div class="label">現行リーグ</div><div class="value">Runes of Aldur</div><div class="note">新規経済・チャレンジ</div></div>
+            <div class="stat"><div class="label">1.0目標</div><div class="value">2026年</div><div class="note">ExileCon後を予定</div></div>
+          </div>
+        </section>
+
+        <section id="timeline">
+          <div class="section-title"><span class="tag">TIMELINE</span><h2>EA開始からの主な変化</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>時期</th><th>版</th><th>転機</th><th>意味</th></tr></thead>
+              <tbody>
+                <tr><td class="center">2024/12</td><td class="center">0.1 EA</td><td class="topic">3 Act・6クラス</td><td>戦術的な戦闘とボス戦は高評価。一方、報酬・難度・エンドゲーム導線が粗かった。</td></tr>
+                <tr><td class="center">2025/04</td><td class="center">0.2</td><td class="topic">Dawn of the Hunt</td><td>Huntress等を追加したが、難度と報酬調整への反発が強く、方向性への不安が表面化。<a href="#src-10">［10］</a></td></tr>
+                <tr><td class="center">2025/08</td><td class="center">0.3</td><td class="topic">The Third Edict</td><td>Act 4を追加。Cruel周回を廃止し、3つのInterludeでレベル65までつなぐ形へ。<a href="#src-4">［4］</a></td></tr>
+                <tr><td class="center">2025/12</td><td class="center">0.4</td><td class="topic">Last of the Druids</td><td>Druid、Talismans、250超のパッシブを追加。CPUボトルネック時25%以上の改善を公表。<a href="#src-5">［5］</a></td></tr>
+                <tr><td class="center">2026/05</td><td class="center">0.5</td><td class="topic">Return of the Ancients</td><td>6本のエンドゲーム物語、固定目標、クエスト版Pinnacle、300超Atlas、Runes of Aldurを投入。<a href="#src-1">［1］</a></td></tr>
+                <tr><td class="center">2026/07</td><td class="center">0.5.4b</td><td class="topic">安定化・磨き込み</td><td>ボス予兆、報酬、Expedition、各種クラッシュ／進行不具合を継続修正。<a href="#src-2">［2］</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="comparison">
+          <div class="section-title"><span class="tag">CHANGE</span><h2>何が変わり、どこまで改善したか</h2></div>
+          <p class="lead">0.5の価値は「コンテンツ量」より、キャンペーン後の迷子を減らし、目的・投資・報酬を結び直したことにある。</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>論点</th><th>初期EAでの課題</th><th>現在の変更点</th><th>現状評価</th></tr></thead>
+              <tbody>
+                <tr><td class="topic">キャンペーン</td><td>Act 1–3をCruelで再走。周回時の長さが負担。</td><td>Act 4＋Interludeへ変更。複数エリア短縮、進行ヒント追加。<a href="#src-4">［4］</a><a href="#src-1">［1］</a></td><td class="assessment">再走は改善。ただしAct 5–6は1.0待ち。</td></tr>
+                <tr><td class="topic">エンドゲーム</td><td>無限Atlasは自由だが、目標・Pinnacle到達が分かりにくい。</td><td>固定POI、全メカニクスのクエスト、決定的に入れるQuest版Pinnacle、300超Atlas Tree。<a href="#src-1">［1］</a></td><td class="assessment">構造上の最大改善。「何を追うか」が明確になった。</td></tr>
+                <tr><td class="topic">育成・特化</td><td>リーグ要素同士の関係と投資先が見えにくい。</td><td>Masters of the Atlasを追加。マップごとに切替可能な非対称ボーナス。<a href="#src-1">［1］</a></td><td class="assessment">PoEらしい特化が増加。ただし学習量も増えた。</td></tr>
+                <tr><td class="topic">クラフト・報酬</td><td>途中装備の更新と報酬の手応えが不安定。</td><td>Runeshape、Verisium Runeforging、Runic Ward、60超の固有破壊ルーン等。0.5.3で高投資報酬を追加調整。<a href="#src-1">［1］</a></td><td class="assessment">選択肢は豊富。経済・最適解はまだ変動が大きい。</td></tr>
+                <tr><td class="topic">クラス・ビルド</td><td>6クラス開始。強い構成への偏りと大幅ナーフへの警戒。</td><td>Huntress・Druidで8クラス。新Ascendancy、Skill、Support、ゲーム内.buildガイドを追加。<a href="#src-1">［1］</a><a href="#src-5">［5］</a></td><td class="assessment">入口は改善。全12クラス完成より、既存クラス品質を優先する方針。</td></tr>
+                <tr><td class="topic">品質・安定性</td><td>EAらしいクラッシュ、進行不能、UI摩擦。</td><td>既知の進行ブロッカーの大半を修正。7月もボス予兆・クラッシュ・Atlas不具合を継続修正。<a href="#src-3">［3］</a><a href="#src-2">［2］</a></td><td class="assessment">改善中だが「完成品の安定性」ではない。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>公開情報を比較した見立て</h3>
+          <ul class="observations">
+            <li><strong>前進した点：</strong>「キャンペーンは良いがエンドゲームが弱い」という批判に対し、0.5は量ではなく構造を変更した。目的地、クエスト、ボス、Atlasポイント獲得が一つの導線になった。</li>
+            <li><strong>まだ不安な点：</strong>0.5直後は進行不能バグが多発し、GGG自身が最優先で修正した。0.5.4bでも修正項目が多く、1.0前の品質収束は観察が必要。<a href="#src-3">［3］</a><a href="#src-2">［2］</a></li>
+            <li><strong>反応の温度感：</strong>SteamDBの7月10日取得時点は同時接続48,110、24時間ピーク87,858、レビュー74.4%肯定。大型IPとして高い関心を維持する一方、評価は満場一致ではない。<a href="#src-9">［9］</a></li>
+            <li><strong>0.2との違い：</strong>0.2は難度・報酬・ナーフが主役に見えたが、0.5は「遊ぶ理由と到達経路」を作ったため、コミュニティの反応は明らかに好転。ただし、これは定量調査ではなく公開投稿からの傾向である。<a href="#src-10">［10］</a><a href="#src-11">［11］</a></li>
+          </ul>
+          <div class="callout blue"><p><strong>判断</strong>　現状は「完成間近の安定版」ではなく、「核となる設計が見えたEA後期版」と捉えるのが妥当。新エンドゲームを試す価値は十分だが、最終キャンペーンや全クラスを求めるなら1.0待ちが合理的。</p></div>
+        </section>
+
+        <section id="watch">
+          <div class="section-title"><span class="tag">WATCH</span><h2>今後注目すべきポイント</h2></div>
+          <p class="lead">1.0までの焦点は、新しい大型拡張ではなく「完成度を閉じる作業」へ移った。<a href="#src-6">［6］</a><a href="#src-7">［7］</a></p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>注目点</th><th>見るべきサイン</th></tr></thead>
+              <tbody>
+                <tr><td class="center">1</td><td class="topic">1.0の確定日と範囲</td><td>ExileCon後・2026年目標。Act 5–6と既存クラスの全Ascendancyは予定されるが、未実装クラス／武器の全投入は約束されていない。<a href="#src-6">［6］</a><a href="#src-7">［7］</a></td></tr>
+                <tr><td class="center">2</td><td class="topic">安定性の収束</td><td>進行不能、Atlas、ボス予兆、クラッシュ修正の頻度が落ちるか。0.5.4bで改善は続くが、修正量自体が未成熟さも示す。<a href="#src-2">［2］</a><a href="#src-3">［3］</a></td></tr>
+                <tr><td class="center">3</td><td class="topic">速度と戦術性の着地点</td><td>PoE 1的な高速・大量処理と、PoE 2の重い戦闘を両立できるか。GGGは「別物にすること自体」を目的にせず、成功要素を相互に借りる姿勢。<a href="#src-8">［8］</a></td></tr>
+                <tr><td class="center">4</td><td class="topic">ビルド多様性と防御</td><td>上位ビルドだけでなく中位スキルがPinnacleへ到達できるか。Runic Ward、Deflection、Leech等の新防御が特定解に固定されないか。<a href="#src-1">［1］</a></td></tr>
+                <tr><td class="center">5</td><td class="topic">リーグの恒常化</td><td>Runes of Aldur／Expedition統合、Runeforging、Runic Wardがコア化される範囲。経済リセット後もクラフト価値が維持されるか。<a href="#src-1">［1］</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="decision">
+          <div class="section-title"><span class="tag">DECISION</span><h2>今遊ぶか、1.0を待つか</h2></div>
+          <div class="choice">
+            <article><h3>今遊ぶのに向く</h3><p>新Atlasを自分で理解したい／Runes of Aldurの経済とクラフトを試したい／EA中の変化も楽しめる。</p></article>
+            <article><h3>1.0待ちに向く</h3><p>Act 5–6まで一気に遊びたい／未実装クラス・武器を重視／進行不能や頻繁な調整を避けたい。</p></article>
+          </div>
+
+          <h3>「なぜPoE 2が必要か」への現時点の答え</h3>
+          <p>PoE 2の存在意義は、PoE 1との差別化そのものではなく、古い基盤と長年の複雑さを抱えたPoE 1を置き換えずに、現代的な戦闘・ボス・導線・表現で「次の入口」を作ることにある。0.5は、PoE 2独自の重い戦闘を残しつつ、PoE 1で成熟した「好きなコンテンツへ特化する」考え方を取り戻した。したがって今後の成否は、独自性の強さではなく、戦術性と爽快感を同じゲーム内で共存させられるかで決まる。<a href="#src-8">［8］</a></p>
+        </section>
+
+        <section id="sources">
+          <div class="section-title"><span class="tag">SOURCES</span><h2>主な公開ソース</h2></div>
+          <ol class="sources">
+            <li id="src-1"><a href="https://www.pathofexile.com/forum/view-thread/3932540">GGG 0.5.0 パッチノート</a></li>
+            <li id="src-2"><a href="https://www.pathofexile.com/forum/view-thread/3980516">GGG 0.5.4b パッチノート</a></li>
+            <li id="src-3"><a href="https://www.pathofexile.com/forum/view-thread/3942907">GGG What we are working on Part 2</a></li>
+            <li id="src-4"><a href="https://www.pathofexile.com/forum/view-thread/3826682">GGG 0.3.0 The Third Edict</a></li>
+            <li id="src-5"><a href="https://www.pathofexile.com/forum/view-thread/3883495">GGG 0.4.0 Last of the Druids</a></li>
+            <li id="src-6"><a href="https://www.pathofexile.com/forum/view-thread/3930564">GGG Road to 1.0</a></li>
+            <li id="src-7"><a href="https://www.pcgamer.com/games/rpg/path-of-exile-2s-massive-return-of-the-ancients-expansion-will-be-its-last-major-update-before-it-leaves-early-access-later-this-year-i-want-to-get-this-game-finished-i-really-really-do/">PC Gamer：1.0の範囲</a></li>
+            <li id="src-8"><a href="https://www.pcgamer.com/games/rpg/path-of-exile-2-director-is-on-a-quest-to-make-the-perfect-action-rpg-and-isnt-afraid-to-borrow-from-path-of-exile-1-to-pull-it-off/">PC Gamer：PoE 1 / 2の設計思想</a></li>
+            <li id="src-9"><a href="https://steamdb.info/app/2694490/charts/">SteamDB：接続・レビュー</a></li>
+            <li id="src-10"><a href="https://www.polygon.com/news/555208/path-of-exile-2-dawn-of-the-hunt-rebalance-fix-update">Polygon：0.2への反応</a></li>
+            <li id="src-11"><a href="https://www.reddit.com/r/PathOfExile2/comments/1u3d4oq/path_of_exile_2_052_patch_preview_releasing_today/">Reddit：0.5.2反応（参考）</a></li>
+          </ol>
+          <p class="note">注：1.0の日程・実装範囲は変更される可能性があります。接続数は取得時点のスナップショットです。</p>
+        </section>
+      </main>
+
+      <footer>Path of Exile 2 現状整理レポート｜2026-07-10（JST）</footer>
+    </article>
+  </div>
+</body>
+</html>
